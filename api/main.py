@@ -173,6 +173,54 @@ async def metrics():
     )
 
 
+@app.get("/model/info")
+async def model_info():
+    """Retorna detalhes sobre arquitetura, treinamento e limitacoes do modelo."""
+    if predictor is None:
+        raise HTTPException(status_code=503, detail="Modelo nao carregado.")
+
+    cfg = predictor.config
+    m = cfg.get("metrics", {}).get("test", {})
+    t = cfg.get("training", {})
+    d = cfg.get("data_info", {})
+
+    return {
+        "symbol": t.get("symbol"),
+        "architecture": {
+            "type": "LSTM (Long Short-Term Memory)",
+            "num_layers": cfg["model"]["num_layers"],
+            "hidden_size": cfg["model"]["hidden_size"],
+            "dropout": cfg["model"]["dropout"],
+            "sequence_length": cfg["model"]["sequence_length"],
+            "framework": "PyTorch"
+        },
+        "training": {
+            "period": f"{t.get('start_date')} a {t.get('end_date')}",
+            "total_samples": d.get("total_samples"),
+            "optimizer": f"Adam (lr={t.get('learning_rate')})",
+            "batch_size": t.get("batch_size"),
+            "epochs_run": t.get("num_epochs_run"),
+            "split": {
+                "train": t.get("train_ratio"),
+                "val": t.get("val_ratio"),
+                "test": t.get("test_ratio")
+            }
+        },
+        "test_metrics": {
+            "MAE": m.get("MAE"),
+            "RMSE": m.get("RMSE"),
+            "MAPE": m.get("MAPE")
+        },
+        "metrics_explanation": {
+            "MAE": "Erro absoluto medio em R$. Exemplo: MAE=1.50 significa que o modelo erra em media R$1.50.",
+            "RMSE": "Raiz do erro quadratico medio. Penaliza erros grandes. Se RMSE >> MAE, ha outliers.",
+            "MAPE": "Erro percentual medio. MAPE=3% significa que a previsao erra em media 3% do valor real."
+        },
+        "limitations": "Modelo treinado exclusivamente com PETR4.SA. Previsoes para outros tickers usam o mesmo scaler e pesos, portanto nao sao confiaveis.",
+        "exported_at": cfg.get("exported_at")
+    }
+
+
 # === GRADIO DASHBOARD ===
 
 def create_prediction_plot(symbol: str):
