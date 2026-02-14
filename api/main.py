@@ -298,6 +298,9 @@ def get_model_info():
         f"Acao treinada: {t.get('symbol', 'N/A')}\n"
         f"Periodo dos dados: {t.get('start_date')} a {t.get('end_date')}\n"
         f"Total de amostras: {d.get('total_samples', 'N/A')}\n\n"
+        f"IMPORTANTE: este modelo foi treinado exclusivamente com dados\n"
+        f"da {t.get('symbol', 'N/A')}. Previsoes para outros tickers usam\n"
+        f"o mesmo scaler e pesos, portanto nao sao confiaveis.\n\n"
         f"ARQUITETURA\n"
         f"{'-'*30}\n"
         f"Tipo: LSTM (Long Short-Term Memory)\n"
@@ -310,6 +313,20 @@ def get_model_info():
         f"MAE:  R$ {m.get('MAE', 'N/A')}\n"
         f"RMSE: R$ {m.get('RMSE', 'N/A')}\n"
         f"MAPE: {m.get('MAPE', 'N/A')}%\n\n"
+        f"O QUE SIGNIFICAM ESSAS METRICAS?\n"
+        f"{'-'*30}\n"
+        f"MAE (Mean Absolute Error / Erro Absoluto Medio):\n"
+        f"  Media das diferencas absolutas entre previsao e valor real.\n"
+        f"  Exemplo: MAE = 1.50 significa que o modelo erra, em media,\n"
+        f"  R$ 1.50 para cima ou para baixo.\n\n"
+        f"RMSE (Root Mean Square Error / Raiz do Erro Quadratico Medio):\n"
+        f"  Similar ao MAE, mas penaliza mais os erros grandes.\n"
+        f"  Se o RMSE e muito maior que o MAE, o modelo tem alguns\n"
+        f"  erros grandes pontuais (outliers).\n\n"
+        f"MAPE (Mean Absolute Percentage Error / Erro Percentual Medio):\n"
+        f"  Erro medio em termos percentuais. E a metrica mais\n"
+        f"  intuitiva: MAPE = 3% significa que a previsao erra,\n"
+        f"  em media, 3%% do valor real.\n\n"
         f"TREINAMENTO\n"
         f"{'-'*30}\n"
         f"Framework: PyTorch\n"
@@ -343,11 +360,16 @@ with gr.Blocks(
     with gr.Tabs():
         # Tab 1: Previsao
         with gr.TabItem("Previsao em Tempo Real"):
+            gr.Markdown(
+                "> **Nota:** O modelo foi treinado com dados da **PETR4.SA**. "
+                "Previsoes para outros tickers utilizam o mesmo modelo e scaler, "
+                "portanto sao apenas ilustrativas e nao devem ser consideradas confiaveis."
+            )
             with gr.Row():
                 symbol_input = gr.Textbox(
                     value="PETR4.SA",
                     label="Ticker da Acao",
-                    info="Ex: PETR4.SA, VALE3.SA, ITUB4.SA"
+                    info="Modelo treinado com PETR4.SA. Outros tickers sao apenas ilustrativos."
                 )
                 predict_btn = gr.Button("Gerar Previsao", variant="primary")
 
@@ -380,31 +402,109 @@ with gr.Blocks(
                 ## Endpoints da API REST
 
                 A API FastAPI roda em paralelo com este dashboard.
-                Acesse `/docs` para a documentacao interativa (Swagger).
+                Acesse [`/docs`](https://guifav-lstm-petr4-stock-prediction.hf.space/docs) para a documentacao interativa (Swagger).
 
-                ### GET /health
+                A URL base da API e:
+                ```
+                https://guifav-lstm-petr4-stock-prediction.hf.space
+                ```
+
+                ---
+
+                ### 1. Health Check
+
                 Verifica se a API esta funcionando.
 
-                ### GET /predict/{symbol}
-                Preve o proximo preco de fechamento para um ticker.
-
-                **Exemplo:**
-                ```
-                GET /predict/PETR4.SA
+                ```bash
+                curl https://guifav-lstm-petr4-stock-prediction.hf.space/health
                 ```
 
-                ### POST /predict
-                Preve a partir de uma lista de precos fornecida.
+                **Resposta esperada:**
+                ```json
+                {"status": "healthy", "model_loaded": true}
+                ```
 
-                **Body:**
+                ---
+
+                ### 2. Previsao por Ticker
+
+                Preve o proximo preco de fechamento para uma acao.
+                O modelo baixa automaticamente os ultimos 60 dias de dados via yfinance.
+
+                ```bash
+                curl https://guifav-lstm-petr4-stock-prediction.hf.space/predict/PETR4.SA
+                ```
+
+                **Resposta esperada:**
                 ```json
                 {
-                    "close_prices": [36.5, 36.8, 37.1, ...]
+                    "symbol": "PETR4.SA",
+                    "predicted_close": 38.42,
+                    "last_close": 37.95,
+                    "change_percent": 1.24,
+                    "timestamp": "2026-02-14T12:00:00"
                 }
                 ```
 
-                ### GET /metrics
-                Retorna metricas do modelo e da API.
+                > **Nota:** O modelo foi treinado com dados de PETR4.SA.
+                > Previsoes para outros tickers utilizam o mesmo modelo e scaler,
+                > portanto sao apenas ilustrativas.
+
+                ---
+
+                ### 3. Previsao com Dados Proprios (POST)
+
+                Envia uma lista de precos de fechamento (minimo 60 valores)
+                e recebe a previsao do proximo dia.
+
+                ```bash
+                curl -X POST https://guifav-lstm-petr4-stock-prediction.hf.space/predict \\
+                  -H "Content-Type: application/json" \\
+                  -d '{"close_prices": [36.5, 36.8, 37.1, 36.9, 37.3, 37.0, 36.7, 37.2, 37.5, 37.8, 37.4, 37.6, 37.9, 38.1, 37.7, 38.0, 38.3, 38.5, 38.2, 38.4, 38.7, 38.9, 38.6, 38.8, 39.1, 39.3, 39.0, 39.2, 39.5, 39.7, 39.4, 39.6, 39.9, 40.1, 39.8, 40.0, 40.3, 40.5, 40.2, 40.4, 40.7, 40.9, 40.6, 40.8, 41.1, 41.3, 41.0, 41.2, 41.5, 41.7, 41.4, 41.6, 41.9, 42.1, 41.8, 42.0, 42.3, 42.5, 42.2, 42.4]}'
+                ```
+
+                **Resposta esperada:**
+                ```json
+                {
+                    "predicted_close": 42.58,
+                    "input_length": 60
+                }
+                ```
+
+                ---
+
+                ### 4. Metricas do Modelo
+
+                Retorna metricas de avaliacao do modelo e estatisticas de uso da API.
+
+                ```bash
+                curl https://guifav-lstm-petr4-stock-prediction.hf.space/metrics
+                ```
+
+                **Resposta esperada:**
+                ```json
+                {
+                    "model_metrics": {
+                        "mae": 0.8234,
+                        "rmse": 1.0456,
+                        "mape": 2.15
+                    },
+                    "api_stats": {
+                        "total_requests": 142,
+                        "avg_latency_ms": 85.3
+                    }
+                }
+                ```
+
+                ---
+
+                ### 5. Informacoes do Modelo
+
+                Retorna detalhes sobre a arquitetura, treinamento e limitacoes.
+
+                ```bash
+                curl https://guifav-lstm-petr4-stock-prediction.hf.space/model/info
+                ```
                 """
             )
 

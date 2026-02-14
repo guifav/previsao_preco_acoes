@@ -1,7 +1,7 @@
 # Roteiro do Video - LSTM para Predicao de Precos de Acoes
 
 ## Informacoes Gerais
-- **Duracao estimada:** 8 a 12 minutos
+- **Duracao estimada:** 10 a 14 minutos
 - **Plataforma:** YouTube (educacional, publico)
 - **Tom:** Didatico, tecnico mas acessivel
 - **Titulo sugerido:** "Prevendo Precos de Acoes com LSTM em PyTorch -- Do Zero ao Deploy"
@@ -128,9 +128,38 @@
 
 ---
 
-## PARTE 5: INFRAESTRUTURA (9:00 - 10:00)
+## PARTE 5: API REST E TESTES (9:00 - 10:00)
 
-**[Tela: Dockerfile e docker-compose no editor]**
+**[Tela: terminal com curl]**
+
+"Alem do dashboard visual, a API REST permite que qualquer sistema consuma as previsoes programaticamente. Vou mostrar como testar."
+
+*[Executar no terminal]*
+
+"Para verificar se a API esta no ar:"
+```
+curl https://guifav-lstm-petr4-stock-prediction.hf.space/health
+```
+
+"Para obter a previsao do proximo dia:"
+```
+curl https://guifav-lstm-petr4-stock-prediction.hf.space/predict/PETR4.SA
+```
+
+"E para ver metricas do modelo e da API:"
+```
+curl https://guifav-lstm-petr4-stock-prediction.hf.space/metrics
+```
+
+*[Mostrar as respostas JSON]*
+
+"Tudo documentado com Swagger. Basta acessar /docs no navegador."
+
+---
+
+## PARTE 6: INFRAESTRUTURA E RETREINO (10:00 - 11:00)
+
+**[Tela: Dockerfile e GitHub Actions no editor]**
 
 "Sobre a infraestrutura: o projeto inteiro roda em um container Docker. Isso garante que funciona em qualquer maquina sem problemas de dependencia."
 
@@ -138,15 +167,19 @@
 
 "Para rodar localmente, basta um docker-compose up. O healthcheck monitora a API automaticamente."
 
-"O monitoramento e feito com logging estruturado -- cada requisicao registra latencia, endpoint e status. Esses dados ficam acessiveis via endpoint /metrics, o que permite criar alertas e dashboards de monitoramento."
+"O monitoramento e feito com logging estruturado -- cada requisicao registra latencia, endpoint e status. Esses dados ficam acessiveis via endpoint /metrics."
+
+*[Mostrar o arquivo .github/workflows/retrain.yml]*
+
+"E aqui um detalhe que faz toda a diferenca em producao: configurei um GitHub Action que toda segunda-feira, antes da abertura do mercado, retreina o modelo automaticamente com os dados mais recentes. O workflow baixa os dados atualizados, retreina o modelo, publica os novos artefatos no HuggingFace Hub e atualiza o Space. Tudo automatico, sem intervencao manual."
 
 ---
 
-## ENCERRAMENTO (10:00 - 11:00)
+## ENCERRAMENTO (11:00 - 12:00)
 
 **[Tela: slide de resumo ou repositorio no GitHub]**
 
-"Recapitulando o que construimos: coletamos dados financeiros, treinamos uma LSTM em PyTorch, avaliamos com metricas de regressao, deployamos com FastAPI e Gradio, containerizamos com Docker, e publicamos tudo no HuggingFace."
+"Recapitulando o que construimos: coletamos dados financeiros, treinamos uma LSTM em PyTorch, avaliamos com metricas de regressao, deployamos com FastAPI e Gradio, containerizamos com Docker, publicamos tudo no HuggingFace, e configuramos retreino automatico semanal com GitHub Actions."
 
 "Todo o codigo esta no GitHub, o notebook roda direto no Google Colab sem instalar nada, o modelo esta no HuggingFace Hub, e o dashboard esta live. Os links estao na descricao."
 
@@ -170,8 +203,10 @@ Neste video mostro cada etapa do pipeline:
 - Treinamento com early stopping e learning rate scheduling
 - Avaliacao com MAE, RMSE e MAPE
 - Deploy com FastAPI + Gradio no HuggingFace Spaces
+- API REST com endpoints testados via curl
 - Publicacao do modelo no HuggingFace Hub
 - Containerizacao com Docker
+- Retreino automatico semanal com GitHub Actions
 
 Links:
 - Dashboard live: https://huggingface.co/spaces/guifav/lstm-petr4-stock-prediction
@@ -185,4 +220,4 @@ FastAPI, HuggingFace, Docker, Series Temporais, Python Tutorial
 
 ## TAGS SUGERIDAS
 
-LSTM, PyTorch, machine learning, deep learning, predicao acoes, stock prediction, FastAPI, HuggingFace, Docker, series temporais, Petrobras, PETR4, redes neurais, Python, tutorial, deploy, API, Gradio
+LSTM, PyTorch, machine learning, deep learning, predicao acoes, stock prediction, FastAPI, HuggingFace, Docker, series temporais, Petrobras, PETR4, redes neurais, Python, tutorial, deploy, API, Gradio, GitHub Actions, CI/CD, retreino automatico

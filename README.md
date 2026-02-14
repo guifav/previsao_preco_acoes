@@ -50,10 +50,14 @@ Modelo preditivo de redes neurais LSTM (Long Short-Term Memory) para prever o pr
 ```
 previsao_preco_acoes/
 ├── README.md                          # Este arquivo
+├── ROTEIRO_VIDEO.md                   # Roteiro do video explicativo
 ├── Dockerfile                         # Container para deploy
 ├── docker-compose.yml                 # Orquestracao local
 ├── requirements.txt                   # Dependencias Python
 ├── .gitignore
+├── .github/
+│   └── workflows/
+│       └── retrain.yml                # GitHub Action: retreino semanal
 ├── notebooks/
 │   └── lstm_petr4_stock_prediction.ipynb  # Notebook didatico (Colab-ready)
 ├── src/
@@ -118,10 +122,39 @@ docker-compose up --build
 | POST | `/predict` | Previsao com dados fornecidos pelo usuario |
 | GET | `/metrics` | Metricas do modelo e da API |
 
-Exemplo de requisicao:
+#### Exemplos com curl (API em producao)
+
 ```bash
+# Health check
+curl https://guifav-lstm-petr4-stock-prediction.hf.space/health
+
+# Previsao automatica para PETR4
+curl https://guifav-lstm-petr4-stock-prediction.hf.space/predict/PETR4.SA
+
+# Metricas do modelo e da API
+curl https://guifav-lstm-petr4-stock-prediction.hf.space/metrics
+
+# Previsao com dados customizados (POST)
+curl -X POST https://guifav-lstm-petr4-stock-prediction.hf.space/predict \
+  -H "Content-Type: application/json" \
+  -d '{"close_prices": [36.5, 36.8, 37.1, 36.9, 37.3, 37.0, 36.7, 37.2, 37.5, 37.8, 38.0, 37.6, 37.9, 38.2, 38.5, 38.1, 37.8, 38.3, 38.6, 38.9, 39.1, 38.7, 39.0, 39.3, 39.6, 39.2, 38.9, 39.4, 39.7, 40.0, 39.6, 39.3, 39.8, 40.1, 40.4, 40.0, 39.7, 40.2, 40.5, 40.8, 41.0, 40.6, 40.3, 40.8, 41.1, 41.4, 41.0, 40.7, 41.2, 41.5, 41.8, 41.4, 41.1, 41.6, 41.9, 42.2, 41.8, 41.5, 42.0, 42.3]}'
+```
+
+#### Exemplos locais
+
+```bash
+# Mesmos endpoints, mas usando localhost
 curl http://localhost:7860/predict/PETR4.SA
 ```
+
+### 5. Retreino automatico (GitHub Actions)
+
+O modelo e retreinado automaticamente toda segunda-feira via GitHub Actions, incorporando os dados mais recentes. O workflow:
+
+1. Baixa dados atualizados via yfinance
+2. Retreina o modelo LSTM
+3. Publica os novos artefatos no HuggingFace Hub
+4. Atualiza o Space com o modelo atualizado
 
 ## Tecnologias
 

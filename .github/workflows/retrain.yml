@@ -1,0 +1,77 @@
+name: Retreino Semanal do Modelo LSTM
+
+on:
+  schedule:
+    # Toda segunda-feira as 08:00 UTC (05:00 BRT)
+    # Roda antes da abertura do mercado brasileiro
+    - cron: '0 8 * * 1'
+  workflow_dispatch:  # Permite executar manualmente
+
+jobs:
+  retrain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout do repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt huggingface_hub
+
+      - name: Treinar modelo com dados atualizados
+        run: python -m src.train --symbol PETR4.SA --epochs 100 --output-dir models
+
+      - name: Publicar artefatos no HuggingFace Hub
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python -c "
+          from huggingface_hub import HfApi
+          api = HfApi(token='${{ secrets.HF_TOKEN }}')
+          repo_id = 'guifav/lstm-petr4-stock-prediction'
+
+          # Upload artefatos do modelo
+          for fname in ['lstm_model.pth', 'scaler.joblib', 'config.json']:
+              api.upload_file(
+                  path_or_fileobj=f'models/{fname}',
+                  path_in_repo=fname,
+                  repo_id=repo_id,
+                  repo_type='model'
+              )
+          print(f'Modelo atualizado em https://huggingface.co/{repo_id}')
+          "
+
+      - name: Atualizar artefatos no HuggingFace Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python -c "
+          from huggingface_hub import HfApi
+          api = HfApi(token='${{ secrets.HF_TOKEN }}')
+          space_id = 'guifav/lstm-petr4-stock-prediction'
+
+          # Upload artefatos atualizados para o Space
+          for fname in ['lstm_model.pth', 'scaler.joblib', 'config.json']:
+              api.upload_file(
+                  path_or_fileobj=f'models/{fname}',
+                  path_in_repo=f'models/{fname}',
+                  repo_id=space_id,
+                  repo_type='space'
+              )
+          print(f'Space atualizado em https://huggingface.co/spaces/{space_id}')
+          "
+
+      - name: Commit dos artefatos no repositorio
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add models/
+          git diff --staged --quiet || git commit -m "chore: retreino automatico do modelo $(date +%Y-%m-%d)"
+          git push
