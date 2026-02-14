@@ -10,7 +10,7 @@ Modelo preditivo de redes neurais LSTM (Long Short-Term Memory) para prever o pr
 |---------|------|
 | Dashboard Live | [HuggingFace Spaces](https://huggingface.co/spaces/guifav/lstm-petr4-stock-prediction) |
 | Modelo Treinado | [HuggingFace Hub](https://huggingface.co/guifav/lstm-petr4-stock-prediction) |
-| Notebook | [Ver notebook](notebooks/lstm_petr4_stock_prediction.ipynb) |
+| Notebook | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/guifav/previsao_preco_acoes/blob/main/notebooks/lstm_petr4_stock_prediction.ipynb) |
 | Video Explicativo | [YouTube](https://youtube.com) |
 
 ## Arquitetura
@@ -81,7 +81,7 @@ previsao_preco_acoes/
 
 ### 1. Notebook (recomendado para aprendizado)
 
-Abra o notebook em Jupyter (local ou Colab) e execute celula por celula. Ele contem explicacoes detalhadas de cada etapa.
+Abra o notebook no Google Colab (clique no badge acima) e execute celula por celula. Ele contem explicacoes detalhadas de cada etapa. Tambem funciona localmente em Jupyter com Python 3.11+.
 
 ### 2. Treinamento via script
 

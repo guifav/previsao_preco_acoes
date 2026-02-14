@@ -36,7 +36,7 @@
 
 ## PARTE 2: NOTEBOOK - DADOS E MODELO (2:00 - 5:30)
 
-**[Tela: Jupyter Notebook aberto]**
+**[Tela: Google Colab com o notebook aberto]**
 
 ### Coleta de Dados (2:00 - 2:45)
 "Comecei usando a biblioteca yfinance para baixar o historico da PETR4 desde 2018. Sao mais de mil dias de negociacao."
@@ -148,7 +148,7 @@
 
 "Recapitulando o que construimos: coletamos dados financeiros, treinamos uma LSTM em PyTorch, avaliamos com metricas de regressao, deployamos com FastAPI e Gradio, containerizamos com Docker, e publicamos tudo no HuggingFace."
 
-"Todo o codigo esta no GitHub, o notebook roda em qualquer Jupyter (local ou Colab), o modelo esta no HuggingFace Hub, e o dashboard esta live. Os links estao na descricao."
+"Todo o codigo esta no GitHub, o notebook roda direto no Google Colab sem instalar nada, o modelo esta no HuggingFace Hub, e o dashboard esta live. Os links estao na descricao."
 
 "Agora, o ponto mais importante do video: esse modelo e educacional. Precos de acoes sao influenciados por politica, macroeconomia, sentimento de mercado, noticias -- fatores que um modelo baseado so em historico de precos nao captura. Use esse projeto para aprender, nao para operar na bolsa."
 
