@@ -81,7 +81,20 @@ previsao_preco_acoes/
     └── test_api.py                    # Testes da API
 ```
 
-## Como Usar
+## Quer usar com outra acao? (VALE3, ITUB4, BBDC4...)
+
+1. Faca um **fork** deste repositorio (botao no canto superior direito)
+2. Clique no badge **"Open in Colab"** acima
+3. No Colab, va em **Runtime > Change runtime type > T4 GPU**
+4. Troque o ticker de `PETR4.SA` para a acao desejada (ex: `VALE3.SA`)
+5. Execute todas as celulas -- o notebook e autocontido e didatico
+6. Crie um token no [HuggingFace](https://huggingface.co/settings/tokens) com permissao Write
+7. Rode as celulas de upload para publicar no HuggingFace Hub e criar o Space
+8. Teste sua API: `curl https://SEU_USUARIO-lstm-petr4-stock-prediction.hf.space/predict/VALE3.SA`
+
+Nao precisa instalar nada. Tudo roda no navegador, de graca. Veja o passo a passo detalhado no [ROTEIRO_VIDEO.md](ROTEIRO_VIDEO.md#passo-a-passo-como-usar-este-projeto-com-outra-acao).
+
+## Como Usar (desenvolvimento)
 
 ### 1. Notebook (recomendado para aprendizado)
 
@@ -121,6 +134,7 @@ docker-compose up --build
 | GET | `/predict/{symbol}` | Previsao automatica (baixa dados recentes) |
 | POST | `/predict` | Previsao com dados fornecidos pelo usuario |
 | GET | `/metrics` | Metricas do modelo e da API |
+| GET | `/model/info` | Arquitetura, treinamento e limitacoes |
 
 #### Exemplos com curl (API em producao)
 
@@ -133,6 +147,9 @@ curl https://guifav-lstm-petr4-stock-prediction.hf.space/predict/PETR4.SA
 
 # Metricas do modelo e da API
 curl https://guifav-lstm-petr4-stock-prediction.hf.space/metrics
+
+# Informacoes detalhadas do modelo
+curl https://guifav-lstm-petr4-stock-prediction.hf.space/model/info
 
 # Previsao com dados customizados (POST)
 curl -X POST https://guifav-lstm-petr4-stock-prediction.hf.space/predict \
@@ -189,7 +206,7 @@ Valores especificos sao gerados apos o treinamento e ficam registrados em `model
 
 ## Autor
 
-**Guilherme de Mauro Favaron**
+**Guilherme Favaron**
 
 ## Licenca
 

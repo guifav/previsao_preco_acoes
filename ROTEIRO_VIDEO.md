@@ -221,3 +221,93 @@ FastAPI, HuggingFace, Docker, Series Temporais, Python Tutorial
 ## TAGS SUGERIDAS
 
 LSTM, PyTorch, machine learning, deep learning, predicao acoes, stock prediction, FastAPI, HuggingFace, Docker, series temporais, Petrobras, PETR4, redes neurais, Python, tutorial, deploy, API, Gradio, GitHub Actions, CI/CD, retreino automatico
+
+---
+
+## PASSO A PASSO: COMO USAR ESTE PROJETO COM OUTRA ACAO
+
+Quer treinar o modelo com VALE3, ITUB4, BBDC4 ou qualquer outra acao? Siga este guia. Voce nao precisa instalar nada no seu computador -- tudo roda no navegador, de graca.
+
+**Pre-requisitos:** uma conta no GitHub, uma conta no Google (para o Colab) e uma conta no HuggingFace (gratuita).
+
+### Passo 1: Fazer fork do repositorio
+
+Acesse o repositorio original no GitHub:
+https://github.com/guifav/previsao_preco_acoes
+
+Clique no botao **Fork** (canto superior direito). Isso cria uma copia do projeto inteiro na sua conta. Agora voce tem seu proprio repositorio com todo o codigo.
+
+### Passo 2: Abrir o notebook no Google Colab
+
+No README do seu fork, clique no badge **"Open in Colab"**. O notebook vai abrir direto no Google Colab, pronto para executar. Voce nao precisa baixar nada.
+
+### Passo 3: Ativar a GPU gratuita
+
+No Colab, va em **Runtime > Change runtime type** e selecione **T4 GPU**. Isso e gratuito e acelera o treinamento de minutos para segundos.
+
+### Passo 4: Escolher sua acao
+
+Na celula de configuracao do notebook, troque o ticker de `PETR4.SA` para a acao que voce quiser. Exemplos de tickers brasileiros:
+
+| Ticker | Empresa |
+|--------|---------|
+| VALE3.SA | Vale |
+| ITUB4.SA | Itau Unibanco |
+| BBDC4.SA | Bradesco |
+| ABEV3.SA | Ambev |
+| WEGE3.SA | WEG |
+| MGLU3.SA | Magazine Luiza |
+
+Qualquer acao listada no Yahoo Finance funciona. Basta usar o formato `TICKER.SA` para acoes brasileiras.
+
+### Passo 5: Executar o notebook celula por celula
+
+Execute cada celula na ordem. O notebook e didatico: cada etapa explica o que esta fazendo e por que. Ao final, voce tera:
+- O modelo treinado para a sua acao
+- Graficos de avaliacao (real vs previsto)
+- Metricas de performance (MAE, RMSE, MAPE)
+- 3 artefatos salvos: `lstm_model.pth`, `scaler.joblib`, `config.json`
+
+### Passo 6: Criar uma conta no HuggingFace e gerar um token
+
+Acesse https://huggingface.co e crie uma conta gratuita. Depois va em **Settings > Access Tokens** (https://huggingface.co/settings/tokens) e crie um novo token com permissao **Write**. Guarde esse token -- voce vai usar nos proximos passos.
+
+### Passo 7: Publicar o modelo no HuggingFace Hub
+
+Ainda no Colab, rode a celula de upload para o HuggingFace Hub. Cole seu token quando solicitado. Isso publica o modelo treinado para que qualquer pessoa possa baixar e usar.
+
+### Passo 8: Criar o Space (dashboard + API) no HuggingFace
+
+Rode a celula que cria o HuggingFace Space. Ela vai subir automaticamente o Dockerfile, o codigo da API, o dashboard e os artefatos do modelo. Aguarde 2-3 minutos ate o build finalizar.
+
+Quando estiver pronto, voce tera:
+- Um dashboard interativo para visualizar previsoes
+- Uma API REST acessivel por qualquer sistema
+- Tudo rodando gratuitamente na nuvem
+
+### Passo 9: Testar sua API
+
+Abra o terminal e teste com curl (substitua `SEU_USUARIO` pelo seu usuario do HuggingFace):
+```bash
+# Verificar se a API esta no ar
+curl https://SEU_USUARIO-lstm-petr4-stock-prediction.hf.space/health
+
+# Gerar previsao (troque VALE3.SA pelo ticker que voce treinou)
+curl https://SEU_USUARIO-lstm-petr4-stock-prediction.hf.space/predict/VALE3.SA
+
+# Ver metricas do modelo
+curl https://SEU_USUARIO-lstm-petr4-stock-prediction.hf.space/metrics
+
+# Ver detalhes da arquitetura
+curl https://SEU_USUARIO-lstm-petr4-stock-prediction.hf.space/model/info
+```
+
+Ou simplesmente acesse o dashboard pelo navegador e clique em "Gerar Previsao".
+
+### Passo 10: (Opcional) Configurar retreino automatico
+
+Se quiser que o modelo se atualize sozinho toda semana com dados novos:
+1. No seu fork no GitHub, va em **Settings > Secrets and variables > Actions**
+2. Clique em **New repository secret**
+3. Nome: `HF_TOKEN`, valor: cole seu token do HuggingFace
+4. Pronto! O GitHub Action roda toda segunda-feira, retreina o modelo e atualiza o Space automaticamente
