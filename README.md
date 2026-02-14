@@ -16,33 +16,41 @@ Modelo preditivo de redes neurais LSTM (Long Short-Term Memory) para prever o pr
 ## Arquitetura
 
 ```
-                     +-------------------+
-                     |   Yahoo Finance   |
-                     |   (yfinance)      |
-                     +--------+----------+
-                              |
-                              v
-                     +--------+----------+
-                     |   Pre-processamento|
-                     |   MinMaxScaler     |
-                     |   Sliding Windows  |
-                     +--------+----------+
-                              |
-                              v
-                     +--------+----------+
-                     |   Modelo LSTM      |
-                     |   PyTorch          |
-                     |   2 camadas, 128h  |
-                     +--------+----------+
-                              |
-              +---------------+---------------+
-              |                               |
-              v                               v
-    +---------+---------+           +---------+---------+
-    |  HuggingFace Hub  |           |  HuggingFace      |
-    |  (modelo salvo)   |           |  Spaces           |
-    +-------------------+           |  FastAPI + Gradio  |
-                                    +-------------------+
+  +---------------------+         +------------------------+
+  |   GitHub Actions     |         |   Google Colab         |
+  |   (cron semanal)     |         |   (treino manual)      |
+  +----------+----------+         +----------+-------------+
+             |                               |
+             +---------------+---------------+
+                             |
+                             v
+                    +--------+----------+
+                    |   Yahoo Finance   |
+                    |   (yfinance)      |
+                    +--------+----------+
+                             |
+                             v
+                    +--------+----------+
+                    | Pre-processamento |
+                    |   MinMaxScaler    |
+                    |   Sliding Windows |
+                    +--------+----------+
+                             |
+                             v
+                    +--------+----------+
+                    |   Modelo LSTM     |
+                    |   PyTorch         |
+                    |   2 camadas, 128h |
+                    +--------+----------+
+                             |
+             +---------------+---------------+
+             |                               |
+             v                               v
+   +---------+---------+           +---------+---------+
+   |  HuggingFace Hub  |           |  HuggingFace      |
+   |  (modelo salvo)   |           |  Spaces           |
+   +-------------------+           |  FastAPI + Gradio  |
+                                   +-------------------+
 ```
 
 ## Estrutura do Projeto
@@ -50,7 +58,6 @@ Modelo preditivo de redes neurais LSTM (Long Short-Term Memory) para prever o pr
 ```
 previsao_preco_acoes/
 ├── README.md                          # Este arquivo
-├── ROTEIRO_VIDEO.md                   # Roteiro do video explicativo
 ├── Dockerfile                         # Container para deploy
 ├── docker-compose.yml                 # Orquestracao local
 ├── requirements.txt                   # Dependencias Python
@@ -90,9 +97,9 @@ previsao_preco_acoes/
 5. Execute todas as celulas -- o notebook e autocontido e didatico
 6. Crie um token no [HuggingFace](https://huggingface.co/settings/tokens) com permissao Write
 7. Rode as celulas de upload para publicar no HuggingFace Hub e criar o Space
-8. Teste sua API: `curl https://SEU_USUARIO-lstm-petr4-stock-prediction.hf.space/predict/VALE3.SA`
+8. Teste sua API: `curl https://SEU_USUARIO-NOME_DO_SEU_SPACE.hf.space/predict/VALE3.SA`
 
-Nao precisa instalar nada. Tudo roda no navegador, de graca. Veja o passo a passo detalhado no [ROTEIRO_VIDEO.md](ROTEIRO_VIDEO.md#passo-a-passo-como-usar-este-projeto-com-outra-acao).
+Nao precisa instalar nada. Tudo roda no navegador, de graca.
 
 ## Como Usar (desenvolvimento)
 
