@@ -9,42 +9,42 @@
   "training": {
     "symbol": "PETR4.SA",
     "start_date": "2018-01-01",
-    "end_date": "2026-03-23",
+    "end_date": "2026-03-30",
     "feature_columns": [
       "Close"
     ],
     "target_column": "Close",
     "batch_size": 32,
     "learning_rate": 0.001,
-    "num_epochs_run": 16,
+    "num_epochs_run": 19,
     "train_ratio": 0.7,
     "val_ratio": 0.15,
     "test_ratio": 0.15
   },
   "metrics": {
     "test": {
-      "MAE": 21.7744,
-      "RMSE": 22.0959,
-      "MAPE": 68.0236
+      "MAE": 21.7772,
+      "RMSE": 22.1875,
+      "MAPE": 67.4202
     },
     "validation": {
-      "MAE": 19.5702,
-      "RMSE": 19.6966,
-      "MAPE": 65.8381
+      "MAE": 19.4339,
+      "RMSE": 19.5581,
+      "MAPE": 65.1666
     },
     "train": {
-      "MAE": 3.8899,
-      "RMSE": 4.8204,
-      "MAPE": 43.3711
+      "MAE": 3.9537,
+      "RMSE": 4.8532,
+      "MAPE": 44.5037
     }
   },
   "data_info": {
-    "total_samples": 2042,
-    "train_samples": 1387,
-    "val_samples": 297,
-    "test_samples": 298,
-    "scaler_min": 3.2421298027038574,
-    "scaler_max": 47.0
+    "total_samples": 2047,
+    "train_samples": 1390,
+    "val_samples": 298,
+    "test_samples": 299,
+    "scaler_min": 3.242129325866699,
+    "scaler_max": 49.40999984741211
   },
-  "exported_at": "2026-03-23T09:09:30.915077"
+  "exported_at": "2026-03-30T09:24:32.583779"
 }
