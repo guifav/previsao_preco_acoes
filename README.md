@@ -10,6 +10,7 @@ Modelo preditivo de redes neurais LSTM (Long Short-Term Memory) para prever o pr
 |---------|------|
 | Dashboard Live | [HuggingFace Spaces](https://huggingface.co/spaces/guifav/lstm-petr4-stock-prediction) |
 | Modelo Treinado | [HuggingFace Hub](https://huggingface.co/guifav/lstm-petr4-stock-prediction) |
+| Artigo | [Prevendo Preços de Ações com Machine Learning](https://guifav.dev/blog/prevendo-precos-de-acoes-machine-learning/) |
 | Notebook | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/guifav/previsao_preco_acoes/blob/main/notebooks/lstm_petr4_stock_prediction.ipynb) |
 | Video Explicativo | [YouTube](https://youtube.com) |
 
